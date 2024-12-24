@@ -1,0 +1,35 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id              String   @id @default(cuid())
+    name            String?
+    email           String   @unique
+    password        String
+    image           String?
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+    recipes         Recipe[]
+    favoriteRecipes Recipe[] @relation("UserFavorites")
+}
+
+model Recipe {
+    id           String   @id @default(cuid())
+    title        String
+    description  String
+    ingredients  String
+    instructions String
+    category     String
+    image        String?
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+    author       User     @relation(fields: [authorId], references: [id])
+    authorId     String
+    favoritedBy  User[]   @relation("UserFavorites")
+}
